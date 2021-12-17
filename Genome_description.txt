@@ -1,0 +1,3 @@
+Genome	Fasta	Model	Alias
+Ath_Col0-nucl	genomes/TAIR10_nucl.fa	eukaryotic	genomes/TAIR10_chr-alias.txt
+Ath_Col0-orga	genomes/TAIR10_orga.fa	organellar	genomes/TAIR10_chr-alias.txt

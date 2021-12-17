@@ -1,0 +1,55 @@
+Package: tRNAscanImport
+Title: Importing a tRNAscan-SE result file as GRanges object
+Version: 1.7.3
+Date: 2020-01-21
+Authors@R: person("Felix G.M.", 
+                  "Ernst", 
+                  email = "felix.gm.ernst@outlook.com", 
+                  role = c("aut", "cre"),
+                  comment = c(ORCID = "0000-0001-5064-0928"))
+Description: The package imports the result of tRNAscan-SE as a GRanges object.
+License: GPL-3 + file LICENSE
+Encoding: UTF-8
+LazyData: false
+Depends:
+    R (>= 3.5),
+    GenomicRanges,
+    tRNA
+Imports:
+    methods,
+    assertive,
+    stringr,
+    BiocGenerics,
+    Biostrings,
+    Structstrings,
+    IRanges,
+    data.table,
+    plyr,
+    XVector,
+    GenomeInfoDb,
+    rtracklayer,
+    BSgenome,
+    Rsamtools
+Collate:
+    'tRNAscanImport.R'
+    'AllGenerics.R'
+    'tRNAscanImport-checks.R'
+    'tRNAscanImport-genome.R'
+    'tRNAscanImport-import.R'
+Suggests:
+    BiocStyle, 
+    knitr,
+    rmarkdown,
+    testthat,
+    ggplot2,
+    BSgenome.Scerevisiae.UCSC.sacCer3
+RoxygenNote: 7.0.2
+VignetteBuilder: knitr
+biocViews:
+    Software,
+    DataImport,
+    WorkflowStep,
+    Preprocessing,
+    Visualization    
+BugReports: https://github.com/FelixErnst/tRNAscanImport/issues
+URL: https://github.com/FelixErnst/tRNAscanImport

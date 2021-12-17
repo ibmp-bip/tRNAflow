@@ -1,0 +1,126 @@
+"""
+Author: V. COGNAT
+Affiliation: IBMP - CNRS
+Aim: A simple Snakemake workflow to process tRNA annotation.
+Date: Wed March 18 CET 2020
+Run: snakemake -s Snakefile
+Unlock dir: snakemake --unlock
+Latest modification:
+  - 2020/03/18 : general workflow
+  - 2020/07/16 : Add options for tRNAscanSE in Genome_description.txt file
+"""
+import pandas as pd
+from snakemake.utils import validate, min_version
+##### set minimum snakemake version #####
+min_version("5.11.1")
+
+##### load config and sample sheets #####
+
+# Config file path
+configfile: "config.yml"
+
+# load file path
+workdir: config['workdir']
+table_genomes = pd.read_table(config["genome_file"], index_col="Genome")
+GENOMES=table_genomes.index.values
+#print (GENOMES)
+
+rule all:
+  input:
+         expand("results/{genome}/{genome}-tRNA-final.csv", genome=GENOMES)
+
+
+rule addBox:
+    input:
+        "results/{genome}/{genome}-tRNA-chr.csv"
+    output:
+        "results/{genome}/{genome}-tRNA-final.csv"
+    params:
+        option=lambda wildcards, output: table_genomes.Model[wildcards.genome]
+    message: """--- Add Chr Name for {input}."""
+    run:
+        if params.option == 'organellar':
+            shell("workflow/addBox2plantRNA.py -i {input} -o {output} --nobox")
+        else:
+            shell("workflow/addBox2plantRNA.py -i {input} -o {output}")
+
+rule addChrName:
+    input:
+        "results/{genome}/{genome}-tRNA.csv"
+    output:
+        "results/{genome}/{genome}-tRNA-chr.csv"
+    params:
+        lambda wildcards, output: table_genomes.Alias[wildcards.genome]
+    message: """--- Add Chr Name for {input}."""
+    shell:
+        """
+        awk -F '[; ]' 'FNR==NR {{a[$1] = $2";"$4;next}} {{OFS=";"; if (a[$1]) print a[$1],$0; else print "NA;"$0}}' {params} {input} > {output}
+        """
+
+rule concat_data:
+    input:
+        trna="results/{genome}/{genome}-tRNAscanSE.txt",
+        struct="results/{genome}/{genome}-tRNAscanStruct.txt",
+        split="results/{genome}/{genome}-tRNAscanStruct.struct_pieces.csv",
+        up="results/{genome}/{genome}-Up.fa",
+        down="results/{genome}/{genome}-Down.fa"
+    output:
+        "results/{genome}/{genome}-tRNA.csv"
+    message: """--- Concatenate data for {input.trna}."""
+    shell:
+        "workflow/plantRNAconcat.pl -trna {input.trna} -struct {input.struct} -split {input.split} -up {input.up} -down {input.down} -out {output}"
+
+rule split_struct:
+    input:
+        "results/{genome}/{genome}-tRNAscanStruct.txt",
+    output:
+        "results/{genome}/{genome}-tRNAscanStruct.struct_pieces.csv"
+    message: """--- split tRNA struct for {input}."""
+    shell:
+        "Rscript --vanilla  ~/anaconda3/envs/trnaflow/lib/R/library/tRNAscanImport/split_tRNA.R  --progress {input}"
+
+rule seqkit:
+    input:
+        "results/{genome}/{genome}-tRNAscan.bed"
+    output:
+        down="results/{genome}/{genome}-Down.fa",
+        up="results/{genome}/{genome}-Up.fa"
+    params:
+        lambda wildcards, output: table_genomes.Fasta[wildcards.genome]
+    message: """--- Up / down extraction for {input}."""
+    shell:
+        """
+        seqkit subseq --bed {input} -d 25 {params} -f >  {output.down}
+        seqkit subseq --bed {input} -u 50 {params} -f >  {output.up}
+        """
+
+# # -G : General model OR -E : eukaryotes or -O : organellar
+rule trnascanSE:
+    output:
+        trna="results/{genome}/{genome}-tRNAscanSE.txt",
+        struct="results/{genome}/{genome}-tRNAscanStruct.txt",
+        stats="results/{genome}/{genome}-tRNAscanStats.txt",
+        bed="results/{genome}/{genome}-tRNAscan.bed",
+        fa="results/{genome}/{genome}-tRNAscan.fa",
+        log="results/{genome}/{genome}-tRNAscan.log"
+    params:
+        fasta=lambda wildcards, output: table_genomes.Fasta[wildcards.genome],
+        option=lambda wildcards, output: table_genomes.Model[wildcards.genome]
+    message: """--- tRNAscan-SE for {params}."""
+    run:
+        if params.option == 'eukaryotic':
+            shell("tRNAscan-SE -E -o {output.trna} -f {output.struct} -m {output.stats} -b {output.bed} -a {output.fa} -l {output.log} {params.fasta}")
+        if params.option == 'general':
+            shell("tRNAscan-SE -G -o {output.trna} -f {output.struct} -m {output.stats} -b {output.bed} -a {output.fa} -l {output.log} {params.fasta}")
+        if params.option == 'organellar':
+            shell("tRNAscan-SE -O -C -o {output.trna} -f {output.struct} -m {output.stats} -b {output.bed} -a {output.fa} -l {output.log} {params.fasta}")
+        if params.option == 'archae':
+            shell("tRNAscan-SE -A -o {output.trna} -f {output.struct} -m {output.stats} -b {output.bed} -a {output.fa} -l {output.log} {params.fasta}")
+        if params.option == 'bacteria':
+            shell("tRNAscan-SE -B -o {output.trna} -f {output.struct} -m {output.stats} -b {output.bed} -a {output.fa} -l {output.log} {params.fasta}")
+        if params.option == 'mito_vert':
+            shell("tRNAscan-SE -M vert -o {output.trna} -f {output.struct} -m {output.stats} -b {output.bed} -a {output.fa} -l {output.log} {params.fasta}")
+        if params.option == 'mito_mamm':
+            shell("tRNAscan-SE -M mammal -o {output.trna} -f {output.struct} -m {output.stats} -b {output.bed} -a {output.fa} -l {output.log} {params.fasta}")
+        else:
+            print("Define option for model to use in Genome_description.txt file!")

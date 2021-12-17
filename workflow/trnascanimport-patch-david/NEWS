@@ -1,0 +1,25 @@
+Changes in version 0.99.0 (2018-03-17)
++ Submitted to Bioconductor
+
+Changes in version 1.1.1 (2018-08-16)
++ bugfix for recognizing pseudogene annotation
+
+Changes in version 1.1.9 (2018-10-24)
++ moved some functionality to tRNA package
++ added dependency for tRNA package
+
+Changes in version 1.3.1 (2019-01-26)
++ now uses the DotBracketStringSet from the Structstrings package to store the structure information
+
+Changes in version 1.3.2 (2019-02-16)
++ now exits with error message, if empty lines as delimiter of tRNA entries is not found
+
+Changes in version 1.5.3 (2019-08-25)
++ added get.tRNAprecursor function to retrieve tRNA precursor sequences in combination with genomic sequences
++ fixed typos in the NEWS file
++ updated tRNAscan example file for human (the high confidence set is now included)
+
+Changes in version 1.7.3 (2020-01-21)
++ fixed get.tRNAprecursor() function if length of flanking sequences was not equal
++ fixed istRNAscanGRanges() not returing a boolean value on fail
++ removed remove.LowerCase argument from import.tRNAscanAsGRanges() since it was redundant

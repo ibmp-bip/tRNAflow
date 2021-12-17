@@ -1,0 +1,14 @@
+###
+# Author: V. COGNAT
+# Affiliation: IBMP - CNRS
+# Aim: A simple Snakemake workflow to process tRNA annotation.
+# Description: Config file for all data path
+# Date: Wed March 18 CET 2020
+###
+
+## Project dir ##
+#workdir: "~/tRNAflow"
+workdir: "/Users/vcognat/GitLab_IBMP/tRNAflow"
+
+## Genome description file
+genome_file: "Genome_description.txt"
