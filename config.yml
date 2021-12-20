@@ -7,8 +7,10 @@
 ###
 
 ## Project dir ##
-#workdir: "~/tRNAflow"
-workdir: "/Users/vcognat/GitLab_IBMP/tRNAflow"
+workdir: "~/tRNAflow"
+
+## Path to split_tRNA.R prog (change the path to your ananconda3)
+splitRNA: "~/opt/anaconda3/envs/trnaflow/lib/R/library/tRNAscanImport/split_tRNA.R"
 
 ## Genome description file
 genome_file: "Genome_description.txt"

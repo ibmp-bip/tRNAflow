@@ -75,9 +75,11 @@ rule split_struct:
         "results/{genome}/{genome}-tRNAscanStruct.txt",
     output:
         "results/{genome}/{genome}-tRNAscanStruct.struct_pieces.csv"
+    params:
+        config['splitRNA']
     message: """--- split tRNA struct for {input}."""
     shell:
-        "Rscript --vanilla  ~/anaconda3/envs/trnaflow/lib/R/library/tRNAscanImport/split_tRNA.R  --progress {input}"
+        "Rscript --vanilla  {params}  --progress {input}"
 
 rule seqkit:
     input:

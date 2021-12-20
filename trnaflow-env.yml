@@ -5,20 +5,19 @@ channels:
   - r
   - defaults
 dependencies:
-  - bioconda::bioconductor-biocinstaller=1.26.1
-  - conda-forge::graphviz=2.42.3
-  - conda-forge::perl=5.26.2
-  - bioconda::perl-getopt-long=2.50
-  - conda-forge::pip=20.1.1
-  - conda-forge::python=3.8.3
-  - conda-forge::r-base=4.0
-  - r::r-argparse=2.0.1
-  - r::r-devtools=2.3.0
-  - conda-forge::sed=4.7
+  - bioconda::bioconductor-biocinstaller
+  - conda-forge::graphviz
+  - conda-forge::perl
+  - bioconda::perl-getopt-long
+  - conda-forge::pip
+  - conda-forge::python
+  - conda-forge::r-base
+  - r::r-argparse
+  - conda-forge::r-devtools
+  - conda-forge::sed>=4.7
   - bioconda::seqkit=0.13.2
   - bioconda::trnascan-se=2.0.5
-  - conda-forge::biopython=1.79
+  - conda-forge::biopython==1.79
   - pip:
-    - pandas==1.0.5
-    - snakemake==5.20.1
-prefix: ~/anaconda3/envs/trnaflow
+    - pandas
+    - snakemake
